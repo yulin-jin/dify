@@ -51,13 +51,15 @@ class ToolParameterConverter:
                         return value if isinstance(value, bool) else bool(value)
 
                 case ToolParameter.ToolParameterType.NUMBER:
-                    if isinstance(value, int) | isinstance(value, float):
+                    if isinstance(value, int) or isinstance(value, float):
                         return value
                     elif isinstance(value, str) and value != '':
-                        if '.' in value:
-                            return float(value)
-                        else:
-                            return int(value)
+                        try:
+                            return float(value) if '.' in value else int(value)
+                        except ValueError:
+                            raise ValueError(f"The tool parameter value {value} cannot be converted to a number.")
+                    else:
+                        raise ValueError(f"The tool parameter value {value} is not in correct type of number.")
                 case ToolParameter.ToolParameterType.FILE:
                     return value
                 case _:
